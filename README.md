@@ -34,30 +34,25 @@ Reusable Claude Code skills for GSAP animation in Vue/Nuxt and React projects.
 
 ## Installation
 
-### Step 1: Add the marketplace and install
-
 ```bash
 /plugin marketplace add iotron/agent-skills
-/plugin install iotron
+/plugin install iotron-agent-skills
 /reload-plugins
 ```
 
-Skills are now available as `iotron:gsap-animate`, `iotron:gsap-scroll`, etc.
+Skills auto-trigger based on context, or invoke directly:
 
-### Step 2 (optional): Enable short names
-
-By default, plugin skills are namespaced (`iotron:gsap-animate`). To use short names like `/gsap-animate`, symlink from the plugin cache into your project's skills directory:
-
-```bash
-# Run from your project root
-CACHE=$(ls -d ~/.claude/plugins/marketplaces/iotron*/skills 2>/dev/null | head -1)
-mkdir -p .claude/skills
-for skill in "$CACHE"/gsap-*; do
-  ln -sf "$skill" ".claude/skills/$(basename $skill)"
-done
 ```
-
-Now `/gsap-animate`, `/gsap-scroll`, etc. work directly. Updates via `/plugin marketplace update iotron` auto-propagate through the symlinks.
+/iotron-agent-skills:gsap-animate
+/iotron-agent-skills:gsap-scroll
+/iotron-agent-skills:gsap-interact
+/iotron-agent-skills:gsap-text
+/iotron-agent-skills:gsap-svg
+/iotron-agent-skills:gsap-vfx
+/iotron-agent-skills:gsap-optimise
+/iotron-agent-skills:gsap-test
+/iotron-agent-skills:gsap-setup
+```
 
 ### Companion: Official GSAP Skills
 
@@ -78,11 +73,9 @@ Also install the official GSAP API reference skills:
 ## Updating
 
 ```bash
-/plugin marketplace update iotron
+/plugin marketplace update iotron-agent-skills
 /reload-plugins
 ```
-
-If you used symlinks (Step 2), they auto-update — no action needed.
 
 ## Contributing
 
