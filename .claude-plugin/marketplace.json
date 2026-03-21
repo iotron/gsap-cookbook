@@ -1,7 +1,7 @@
 {
-  "name": "iotron",
+  "name": "iotron-agent-skills",
   "owner": {
-    "name": "iotron",
+    "name": "iotron-agent-skills",
     "email": "hello@iotron.co"
   },
   "metadata": {
@@ -10,7 +10,7 @@
   },
   "plugins": [
     {
-      "name": "iotron",
+      "name": "iotron-agent-skills",
       "description": "9 GSAP skills covering the full animation workflow: setup, animate, scroll, interact, text, SVG, VFX, optimise, and test",
       "source": "./",
       "strict": false,
