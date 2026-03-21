@@ -309,21 +309,27 @@ SplitText = await $lazyLoadSplitText()
 // NOW safe to split
 ```
 
-### When using `mask: 'words'`: visibility: 'visible', NOT autoAlpha: 1
+### Parent autoAlpha + child SplitText mask: use visibility, not autoAlpha
 
-Only applies when using SplitText with `mask: 'words'`. The mask creates an `overflow: hidden` wrapper — words are hidden via `y: '100%'` (pushed below the mask), not via opacity. The container just needs `visibility: visible` to un-hide the `.text-reveal` CSS class. Using `autoAlpha: 1` would set `opacity: 1` on the container, overriding the parent `.reveal` wrapper's fade-in animation.
+When a **parent element** is animated with `autoAlpha` (fade-in that controls opacity) and a **child element** uses SplitText with `mask: 'words'` (words hidden via `y: '100%'` below the mask), don't set `autoAlpha: 1` on the child container. `autoAlpha` sets `opacity: 1` which overrides the parent's opacity control — the child becomes fully visible before the parent finishes fading in.
 
-Without `mask: 'words'` (regular SplitText), `autoAlpha` is fine since words are hidden via `autoAlpha: 0` directly.
+The child container only needs `visibility: 'visible'` to un-hide (since CSS may pre-hide it to prevent FOUC). The words remain invisible because they're pushed below the mask, not because of opacity.
+
+This applies whenever you combine:
+- A parent with an `autoAlpha` tween (e.g. a registered `reveal` effect, a fade-in wrapper)
+- A child with `SplitText({ mask: 'words' })` where words are hidden by `y: '100%'`
+
+Without `mask: 'words'` (regular SplitText), `autoAlpha` is fine since words are hidden via `autoAlpha: 0` directly, not by mask position.
 
 ```js
-// BAD (with mask: 'words') — overrides parent .reveal opacity tween
-gsap.set(el, { autoAlpha: 1 })
+// BAD (mask: 'words' + parent has autoAlpha tween) — child opacity overrides parent
+gsap.set(textEl, { autoAlpha: 1 })
 
-// GOOD (with mask: 'words') — container visible, words still hidden by mask
-gsap.set(el, { visibility: 'visible' })
+// GOOD (mask: 'words') — just un-hide, words still invisible below mask
+gsap.set(textEl, { visibility: 'visible' })
 
-// OK (without mask) — words hidden via autoAlpha: 0 directly
-gsap.set(el, { autoAlpha: 1 })
+// OK (no mask, no parent autoAlpha conflict) — words hidden via autoAlpha: 0
+gsap.set(textEl, { autoAlpha: 1 })
 ```
 
 ### Never blank textContent before scramble
@@ -365,9 +371,11 @@ SplitText creates word `<div>` elements inside existing `<span>` tags. This mean
 }
 ```
 
-### .text-reveal CSS class pre-hides elements
+### Recommended: CSS pre-hide classes to prevent FOUC
 
-Both `.reveal` and `.text-reveal` have `visibility: hidden` in `tailwind.css` to prevent FOUC (flash of unstyled content) between SSR render and GSAP initialization. The animation then sets `visibility: visible`.
+Elements animated by GSAP should be pre-hidden in CSS to prevent the flash of unstyled content (FOUC) between SSR render and GSAP initialization. Use `visibility: hidden` (not `display: none` — which removes the element from layout and breaks ScrollTrigger measurements).
+
+GSAP's `autoAlpha` tween automatically sets `visibility: inherit` when animating, so the element becomes visible when the animation runs. The class names below (`.reveal`, `.text-reveal`) are a recommended convention — use whatever fits your project.
 
 ```css
 /* client/app/assets/css/tailwind.css */
