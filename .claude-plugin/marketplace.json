@@ -1,30 +1,17 @@
 {
   "name": "iotron-agent-skills",
   "owner": {
-    "name": "iotron-agent-skills",
+    "name": "iotron",
     "email": "hello@iotron.co"
   },
   "metadata": {
-    "description": "GSAP animation skills for Vue/Nuxt and React",
-    "version": "1.0.0"
+    "description": "GSAP animation skills for Vue/Nuxt and React — setup, patterns, optimisation, and testing"
   },
   "plugins": [
     {
       "name": "iotron-agent-skills",
       "description": "9 GSAP skills covering the full animation workflow: setup, animate, scroll, interact, text, SVG, VFX, optimise, and test",
-      "source": "./",
-      "strict": false,
-      "skills": [
-        "./skills/gsap-setup",
-        "./skills/gsap-animate",
-        "./skills/gsap-scroll",
-        "./skills/gsap-interact",
-        "./skills/gsap-text",
-        "./skills/gsap-svg",
-        "./skills/gsap-vfx",
-        "./skills/gsap-optimise",
-        "./skills/gsap-test"
-      ]
+      "source": "./"
     }
   ]
 }

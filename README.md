@@ -32,6 +32,14 @@ Reusable Claude Code skills for GSAP animation in Vue/Nuxt and React projects.
 | Cyber/terminal page | gsap-text + gsap-vfx + gsap-svg |
 | Stats section | gsap-vfx + gsap-scroll |
 
+### Progressive Disclosure
+
+Skills follow a 3-tier loading pattern to minimise context window usage:
+
+1. **YAML frontmatter** — always in context (~100 words per skill). Includes triggers, non-triggers, and expected outcome.
+2. **SKILL.md body** — loaded when activated. Kept under 200 lines with concise patterns.
+3. **`references/` files** — pulled in only when a specific pattern is needed. Contains full implementations, deep-dives, and production learnings.
+
 ## Installation
 
 ```bash
@@ -80,8 +88,6 @@ Also install the official GSAP API reference skills:
 ## Contributing
 
 Found a bug or have a pattern to add? [Open an issue](https://github.com/iotron/agent-skills/issues) or PR.
-
-If you're using these skills in your projects, drop a star — it takes 2 seconds and helps the community find quality GSAP tooling.
 
 ## License
 
