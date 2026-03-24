@@ -1,7 +1,8 @@
 ---
 name: gsap-scroll
 description: >
-  ScrollTrigger-based GSAP animation patterns for Vue 3 / Nuxt 3.
+  Production recipes for scroll-based GSAP animations in Vue 3 / Nuxt 3.
+  Companion to official gsap-scrolltrigger skill (API reference).
   Triggers: ScrollTrigger, scroll animation, scroll reveal, parallax, sticky cards, stacking cards,
   scrub, pin section, batch reveal, masonry reveal, scroll progress, timeline scrub, elastic type,
   section switching, ScrollTrigger.batch, ScrollTrigger.create, scroll refresh, scroll cleanup,

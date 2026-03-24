@@ -1,8 +1,9 @@
 ---
 name: gsap-animate
 description: >
-  Core GSAP animation orchestrator for Vue 3 / Nuxt 3 and React. Provides foundational patterns
-  and dispatches to specialised sub-skills based on animation type.
+  Production recipes for core GSAP animation orchestration in Vue 3 / Nuxt 3 and React. Provides
+  foundational patterns and dispatches to specialised sub-skills based on animation type.
+  Companion to official gsap-frameworks and gsap-timeline skills (API reference).
   Triggers: GSAP animation, gsap.to, gsap.from, gsap.context, ctx.add, Vue GSAP, Nuxt GSAP,
   animation pattern, component animation, section animation, layout animation.
   Non-triggers: Not for initial GSAP installation/setup (use gsap-setup). Not for specific pattern

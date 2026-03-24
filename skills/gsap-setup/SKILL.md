@@ -1,8 +1,9 @@
 ---
 name: gsap-setup
 description: >
-  GSAP setup and configuration for any framework — Vue 3, Nuxt 3, React, or Next.js. Detects
-  framework from project files and provides the correct setup pattern.
+  Production recipes for GSAP setup and configuration for any framework — Vue 3, Nuxt 3, React,
+  or Next.js. Detects framework from project files and provides the correct setup pattern.
+  Companion to official gsap-core and gsap-frameworks skills (API reference).
   Triggers: GSAP setup, GSAP install, gsap plugin, GSAP Nuxt, GSAP Vue setup, GSAP React setup,
   GSAP Next.js setup, gsap config, GSAP accessibility setup, reduced motion setup, animation
   project setup, useGSAP, gsap registerPlugin.
