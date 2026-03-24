@@ -1,157 +1,88 @@
 # Interaction Patterns Reference
 
 ## Table of Contents
-- [Spring Physics (Elastic Cursor Followers)](#spring-physics-elastic-cursor-followers)
-- [Spotlight Cursor (Clip-Path Circle)](#spotlight-cursor-clip-path-circle)
-- [Circuit Glow (CSS Custom Properties)](#circuit-glow-css-custom-properties)
+- [Draggable with liveSnap](#draggable-with-livesnap)
 
 ---
 
-## Spring Physics (Elastic Cursor Followers)
+## Draggable with liveSnap
 
-Multiple blobs chase the cursor with different durations for a staggered, physics-like feel. Rest positions are **percentage-based** relative to the container.
+SVG point-editing interaction using GSAP Draggable with `liveSnap` — drag handles snap to nearby points with inertia.
 
-```js
-const blobs = [
-  { x: 15, y: 40, size: 90,  dur: 0.9, colorStop: 'rgba(20,184,166,0.4)' },
-  { x: 30, y: 55, size: 55,  dur: 0.6, colorStop: 'rgba(var(--glow-secondary-rgb),0.35)' },
-  { x: 55, y: 30, size: 120, dur: 1.1, colorStop: 'rgba(var(--glow-primary-rgb),0.3)' },
-  { x: 68, y: 65, size: 60,  dur: 0.7, colorStop: 'rgba(6,182,212,0.35)' },
-  { x: 80, y: 25, size: 75,  dur: 0.8, colorStop: 'rgba(20,184,166,0.35)' },
-]
+> Source: [Blake Bowen's CodePen](https://codepen.io/osublake/) (forked)
+
+### HTML — SVG structure
+
+```html
+<svg id="svg" viewBox="0 0 400 400">
+  <defs>
+    <circle class="handle" r="10" />
+    <circle class="marker" r="4" />
+
+    <linearGradient id="grad-1" x1="0" y1="0" x2="400" y2="400" gradientUnits="userSpaceOnUse">
+       <stop offset="0.2" stop-color="#00bae2"></stop>
+       <stop offset="0.8" stop-color="#fec5fb"></stop>
+    </linearGradient>
+  </defs>
+
+  <polygon id="star" stroke="url(#grad-1)"
+    points="261,220 298,335 200,264 102,335 139,220 42,149 162,148 200,34 238,148 358,149" />
+  <g id="marker-layer"></g>
+  <g id="handle-layer"></g>
+</svg>
 ```
 
-### Initial placement — percentage of container
+### JS — Draggable with liveSnap and inertia
 
 ```js
-const setupVisuals = () => {
-  const cw = container.offsetWidth
-  const ch = container.offsetHeight
-  blobRefs.value.forEach((blob, i) => {
-    if (!blob) return
-    const b = blobs[i]
-    blob.style.width = `${b.size}px`
-    blob.style.height = `${b.size}px`
-    blob.style.background = `radial-gradient(circle, ${b.colorStop}, transparent)`
-    blob.style.filter = `blur(${Math.round(b.size / 4)}px)`
-    gsap.set(blob, { xPercent: -50, yPercent: -50, x: (cw * b.x) / 100, y: (ch * b.y) / 100 })
-  })
+var star = document.querySelector("#star");
+var markerDef = document.querySelector("defs .marker");
+var handleDef = document.querySelector("defs .handle");
+var markerLayer = document.querySelector("#marker-layer");
+var handleLayer = document.querySelector("#handle-layer");
+
+// Build a points array from the SVG polygon's point list
+var points = [];
+var numPoints = star.points.numberOfItems;
+
+for (var i = 0; i < numPoints; i++) {
+  var point = star.points.getItem(i);
+  points[i] = { x: point.x, y: point.y };
+  createHandle(point);
+}
+
+function createHandle(point) {
+  var marker = createClone(markerDef, markerLayer, point);
+  var handle = createClone(handleDef, handleLayer, point);
+
+  // Update the live SVG point on every drag frame
+  var update = function () { point.x = this.x; point.y = this.y; };
+
+  var draggable = new Draggable(handle, {
+    onDrag: update,
+    onThrowUpdate: update,   // Also fires during inertia throw
+    inertia: true,            // Enable throw/flick behavior
+    bounds: window,
+    liveSnap: {
+      points: points,         // Snap to any polygon vertex
+      radius: 15              // Only snap within 15px proximity
+    }
+  });
+}
+
+// Clone an SVG template element and position it
+function createClone(node, parent, point) {
+  var element = node.cloneNode(true);
+  parent.appendChild(element);
+  gsap.set(element, { x: point.x, y: point.y });
+  return element;
 }
 ```
 
-### moveBlobs + resetBlobs
+### Key patterns
 
-```js
-onMounted(() => {
-  ctx = gsap.context((self) => {
-    setupVisuals()
-
-    self.add('moveBlobs', (mx, my) => {
-      blobRefs.value.forEach((blob, i) => {
-        if (!blob) return
-        gsap.to(blob, {
-          x: mx, y: my,
-          duration: blobs[i].dur,
-          ease: 'elastic.out(1.2, 0.3)',
-          overwrite: 'auto', force3D: true,
-        })
-      })
-    })
-
-    self.add('resetBlobs', () => {
-      const cw = container.offsetWidth
-      const ch = container.offsetHeight
-      blobRefs.value.forEach((blob, i) => {
-        if (!blob) return
-        const b = blobs[i]
-        gsap.to(blob, {
-          x: (cw * b.x) / 100, y: (ch * b.y) / 100,
-          duration: 1.6, ease: 'elastic.out(1, 0.4)', force3D: true,
-        })
-      })
-    })
-  }, containerRef.value?.closest('section'))
-})
-```
-
-**Key rules**: rest positions are **percentage-based** (`cw * b.x / 100`) | on mousemove blobs go to **exact** cursor position | unique `duration` per blob creates stagger | `elastic.out(1.2, 0.3)` for overshoot on move, softer on reset
-
----
-
-## Spotlight Cursor (Clip-Path Circle)
-
-Reveal a hidden layer by moving a `clipPath` circle to follow the cursor.
-
-```js
-onMounted(() => {
-  ctx = gsap.context((self) => {
-    const spotlight = spotlightRef.value
-    gsap.set(spotlight, { clipPath: 'circle(0px at 50% 50%)' })
-
-    self.add('moveSpotlight', (x, y) => {
-      gsap.to(spotlight, {
-        clipPath: `circle(130px at ${x}px ${y}px)`,
-        duration: 0.25, ease: 'power2.out', overwrite: 'auto',
-      })
-    })
-
-    self.add('hideSpotlight', () => {
-      gsap.to(spotlight, {
-        clipPath: 'circle(0px at 50% 50%)',
-        duration: 0.4, ease: 'power2.inOut', overwrite: 'auto',
-      })
-    })
-  }, scopeRef.value)
-})
-```
-
-**Key rules**: `overwrite: 'auto'` prevents pile-up | initial state via `gsap.set` for clean revert | short duration (0.25s) for responsive feel
-
----
-
-## Circuit Glow (CSS Custom Properties)
-
-Pipe mouse position directly to CSS custom properties without GSAP tweening. Uses a **real div element** with `mask-image` to reveal a glow layer.
-
-### Template
-
-```vue
-<div class="relative w-full" @mousemove="onMouseMove">
-  <div ref="circuitWrap" class="relative z-0" />
-  <div ref="glowRef" class="circuit-glow absolute inset-0 z-[1]" style="--glow-x: 0.5; --glow-y: 0.5" />
-</div>
-```
-
-### JS — unitless ratios (0-1), not pixels
-
-```js
-const onMouseMove = (e) => {
-  if (!glowRef.value) return
-  const rect = e.currentTarget.getBoundingClientRect()
-  glowRef.value.style.setProperty('--glow-x', (e.clientX - rect.left) / rect.width)
-  glowRef.value.style.setProperty('--glow-y', (e.clientY - rect.top) / rect.height)
-}
-```
-
-### CSS
-
-```css
-.circuit-glow {
-  background-image: url('~/assets/images/circuit-board.svg');
-  @apply bg-cover bg-center bg-no-repeat opacity-0;
-  filter: invert(1) sepia(1) saturate(5) hue-rotate(130deg) brightness(0.8);
-  mask-image: radial-gradient(
-    circle 350px at calc(var(--glow-x) * 100%) calc(var(--glow-y) * 100%),
-    black 0%, transparent 100%
-  );
-  -webkit-mask-image: radial-gradient(
-    circle 350px at calc(var(--glow-x) * 100%) calc(var(--glow-y) * 100%),
-    black 0%, transparent 100%
-  );
-}
-div:hover .circuit-glow {
-  @apply opacity-35 transition-opacity duration-500;
-}
-```
-
-**Key rules**: real `<div>` (not `::after`) | stores **unitless ratios** (0-1), CSS uses `calc(var * 100%)` | opacity is CSS-transition-based, no GSAP | direct `style.setProperty` for maximum speed
+- **`liveSnap.points`** — accepts an array of `{x, y}` objects; Draggable snaps to the nearest point within `radius` during drag
+- **`liveSnap.radius`** — distance threshold (in pixels) for snapping; outside this radius, no snap occurs
+- **`inertia: true`** — enables throw/flick physics; `onThrowUpdate` fires each frame during the inertia phase
+- **`onDrag` + `onThrowUpdate`** — both update the SVG polygon point in real time, keeping the shape in sync with handles
+- **SVG `points.getItem(i)`** — returns a live `SVGPoint` reference; mutating `.x`/`.y` immediately updates the rendered polygon

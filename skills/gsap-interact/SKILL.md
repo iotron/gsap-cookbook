@@ -3,14 +3,14 @@ name: gsap-interact
 description: >
   Production recipes for mouse-driven interactive GSAP animations in Vue 3 / Nuxt 3.
   Companion to official gsap-core and gsap-performance skills (API reference).
-  Triggers: GSAP mouse, mousemove animation, tilt card, 3D tilt, cursor follower, elastic blob,
-  spring physics, spotlight effect, clipPath animation, magnetic button, quickTo, quickSetter,
-  hover animation, interactive GSAP, cursor effect, parallax hover, circuit glow, CSS custom
-  property animation, mouse-driven animation.
+  Triggers: GSAP mouse, mousemove animation, tilt card, 3D tilt, quickTo, quickSetter,
+  hover animation, interactive GSAP, parallax hover, drag interaction, Draggable, liveSnap,
+  mouse-driven animation.
   Non-triggers: Not for scroll-driven animation (use gsap-scroll), text effects (use gsap-text),
-  SVG drawing (use gsap-svg), or visual effects like glitch/marquee (use gsap-vfx).
-  Outcome: Produces mouse-driven interactive animations — tilt cards, cursor followers, spotlights,
-  magnetic buttons, and circuit glow effects.
+  SVG drawing (use gsap-svg), visual effects like glitch/marquee (use gsap-vfx),
+  or cursor/pointer effects (use gsap-cursor).
+  Outcome: Produces mouse-driven interactive animations — tilt cards, hover effects,
+  and drag interactions.
 ---
 
 # GSAP Interact — Mouse-Driven Animations
@@ -60,30 +60,7 @@ ctx = gsap.context((self) => {
 
 ---
 
-## 2. Magnetic Buttons (quickTo)
-
-`gsap.quickTo` pre-compiles a tween — 50-250% faster than `gsap.to` for frequent updates.
-
-```js
-let xTo, yTo
-ctx = gsap.context(() => {
-  xTo = gsap.quickTo(btn, 'x', { duration: 0.4, ease: 'power3' })
-  yTo = gsap.quickTo(btn, 'y', { duration: 0.4, ease: 'power3' })
-}, scopeRef.value)
-
-function onMagnetMove(e) {
-  const rect = btn.getBoundingClientRect()
-  xTo((e.clientX - rect.left - rect.width / 2) * 0.35)
-  yTo((e.clientY - rect.top - rect.height / 2) * 0.35)
-}
-function onMagnetLeave() { xTo(0); yTo(0) }
-```
-
-> See **gsap-performance** skill for quickTo vs quickSetter API comparison.
-
----
-
-## 3. Patterns & Best Practices
+## 2. Patterns & Best Practices
 
 ```js
 // 1. ALL event-handler tweens inside ctx.add for cleanup
@@ -114,4 +91,4 @@ gsap.set(el, { force3D: true })
 
 ## References
 
-- `references/interaction-patterns.md` — Spring physics elastic followers, spotlight cursor, circuit glow with CSS custom properties
+- `references/interaction-patterns.md` — Draggable with liveSnap for SVG point editing
