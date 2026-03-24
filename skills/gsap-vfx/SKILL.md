@@ -4,13 +4,13 @@ description: >
   Production recipes for GSAP visual effects in Vue 3 / Nuxt 3.
   Companion to official gsap-core and gsap-timeline skills (API reference).
   Triggers: glitch effect, cyberpunk glitch, RGB displacement, chromatic aberration, scramble text,
-  jitter animation, noise bars, marquee, infinite scroll, rolling counter, animated number, count up,
-  floating animation, yoyo, pulse ring, repeating timeline, GSAP VFX, visual effects, decorative
-  animation, looping animation.
+  jitter animation, noise bars, marquee, infinite scroll, directional marquee, rolling counter,
+  animated number, count up, floating animation, yoyo, pulse ring, repeating timeline, GSAP VFX,
+  visual effects, decorative animation, looping animation, footer bounce, morph bounce, elastic footer.
   Non-triggers: Not for scroll-driven reveals (use gsap-scroll), text-only animation (use gsap-text),
   SVG path/morph (use gsap-svg), or mouse-driven interaction (use gsap-interact).
-  Outcome: Produces visual effects — glitch/chromatic aberration, infinite marquees, rolling counters,
-  floating decorations, pulse rings, and repeating timeline patterns.
+  Outcome: Produces visual effects — glitch/chromatic aberration, infinite marquees, directional marquees,
+  rolling counters, floating decorations, pulse rings, footer bounce reveals, and repeating timeline patterns.
 ---
 
 # GSAP VFX — Visual Effects
@@ -105,7 +105,54 @@ rings.forEach((ring, i) => {
 
 ---
 
-## 6. Repeating Timeline Patterns
+## 6. Directional Marquee (Observer)
+
+Advanced marquee using the official GSAP `horizontalLoop` helper + Observer plugin. Changes direction and speed based on scroll/swipe — unlike the basic marquee above which only scrolls one direction.
+
+```js
+gsap.registerPlugin(Observer)
+const tl = horizontalLoop(gsap.utils.toArray('.rail h4'), { repeat: -1, paddingRight: 30 })
+
+Observer.create({
+  onChangeY(self) {
+    let factor = self.deltaY < 0 ? -2.5 : 2.5
+    gsap.timeline({ defaults: { ease: 'none' } })
+      .to(tl, { timeScale: factor * 2.5, duration: 0.2, overwrite: true })
+      .to(tl, { timeScale: factor / 2.5, duration: 1 }, '+=0.3')
+  }
+})
+```
+
+Full `horizontalLoop` helper and Vue 3 adaptation: see `references/vfx-patterns.md`
+
+---
+
+## 7. Footer Bounce (MorphSVG + ScrollTrigger Velocity)
+
+Footer reveal where an SVG path morphs from a curved bulge to flat with elastic bounce scaled by scroll speed.
+
+```js
+gsap.registerPlugin(ScrollTrigger, MorphSVGPlugin)
+const down   = 'M0-0.3C0-0.3,464,156,1139,156S2278-0.3,2278-0.3V683H0V-0.3z'
+const center = 'M0-0.3C0-0.3,464,0,1139,0s1139-0.3,1139-0.3V683H0V-0.3z'
+
+ScrollTrigger.create({
+  trigger: '.footer', start: 'top bottom',
+  onEnter: self => {
+    const variation = self.getVelocity() / 10000
+    gsap.fromTo('#bouncy-path',
+      { morphSVG: down },
+      { duration: 2, morphSVG: center, ease: `elastic.out(${1 + variation}, ${1 - variation})`, overwrite: true }
+    )
+  }
+})
+```
+
+Full markup, CSS, and Vue 3 adaptation: see `references/vfx-patterns.md`
+
+---
+
+## 8. Repeating Timeline Patterns
 
 See **gsap-timeline** skill for repeat, repeatDelay, yoyo, and position parameter reference.
 
@@ -140,3 +187,4 @@ gsap.to(el, { x: 'random(-50, 50)', repeat: -1, yoyo: true })
 ## References
 
 - `references/glitch-effect.md` — Full glitch implementation: RGB displacement, scramble, jitter, noise bars, GPU lifecycle
+- `references/vfx-patterns.md` — Directional marquee (Observer + horizontalLoop helper) and footer bounce (MorphSVG + ScrollTrigger velocity)
