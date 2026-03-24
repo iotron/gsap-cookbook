@@ -40,6 +40,23 @@ Skills follow a 3-tier loading pattern to minimise context window usage:
 2. **SKILL.md body** — loaded when activated. Kept under 200 lines with concise patterns.
 3. **`references/` files** — pulled in only when a specific pattern is needed. Contains full implementations, deep-dives, and production learnings.
 
+## Prerequisites
+
+Install the official GSAP skills first — this plugin provides production recipes that build on them:
+
+```bash
+/plugin marketplace add greensock/gsap-skills
+/plugin install gsap-skills
+/reload-plugins
+```
+
+| This plugin | Official GSAP skills |
+|-------------|---------------------|
+| **How** to build specific animations (recipes, patterns, gotchas) | **What** GSAP can do (API reference) |
+| Vue 3 / Nuxt 3 + React focused | All frameworks |
+| Production-tested multi-layer patterns | Complete plugin-by-plugin docs |
+| Performance audit checklists | General performance guidance |
+
 ## Installation
 
 ```bash
@@ -61,22 +78,6 @@ Skills auto-trigger based on context, or invoke directly:
 /iotron-agent-skills:gsap-test
 /iotron-agent-skills:gsap-setup
 ```
-
-### Companion: Official GSAP Skills
-
-Also install the official GSAP API reference skills:
-
-```bash
-/plugin marketplace add greensock/gsap-skills
-/plugin install gsap-skills
-```
-
-| This plugin | Official GSAP skills |
-|-------------|---------------------|
-| **How** to use GSAP well (patterns, optimisation) | **What** GSAP can do (API reference) |
-| Vue/Nuxt + React focused | All frameworks |
-| Real codebase patterns & gotchas | Complete API coverage |
-| Anti-patterns & audit checklists | Plugin-by-plugin docs |
 
 ## Updating
 
