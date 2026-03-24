@@ -29,6 +29,7 @@ Install GSAP per the official **gsap-core** skill. Then set up the framework plu
 
 ## 2. Framework Setup
 
+<!-- TODO: Remove after greensock/gsap-skills PR merged — Nuxt setup will be in gsap-frameworks skill + examples -->
 ### Nuxt 3
 
 ```js
@@ -44,6 +45,7 @@ export default defineNuxtPlugin(() => {
 
 Access: `const { $gsap: gsap, $ScrollTrigger: ScrollTrigger } = useNuxtApp()`
 
+<!-- TODO: Remove after greensock/gsap-skills PR merged — Vue setup will be in gsap-frameworks skill + examples -->
 ### Vue 3 (Vite)
 
 ```js
@@ -56,6 +58,7 @@ app.provide('gsap', gsap)
 
 Access: `const gsap = inject('gsap')` or import directly (tree-shakes fine with Vite).
 
+<!-- TODO: Remove after greensock/gsap-skills PR merged — React setup already in gsap-react skill -->
 ### React (Vite / CRA)
 
 ```jsx
@@ -73,6 +76,7 @@ function Component() {
 }
 ```
 
+<!-- TODO: Remove after greensock/gsap-skills PR merged — Next.js setup will be in gsap-frameworks skill + examples -->
 ### Next.js (App Router)
 
 ```jsx
