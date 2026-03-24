@@ -118,6 +118,9 @@ See `references/scroll-patterns.md` for:
 - **Scrubbed Timeline** — progress bar, bouncing dots, alternating card reveals
 - **Elastic Type Assembly** — pin + scrub three-phase scatter/assemble/scatter
 - **Service Section Switching** — ScrollTrigger.create() with activate/deactivate callbacks
+- **Velocity Skew** — skewY transforms driven by ScrollTrigger.getVelocity() + gsap.quickSetter
+- **Infinite Looped Panels** — pinSpacing: false stacking with seamless scroll boundary looping
+- **Directionally Aware Header** — show/hide fixed header based on scroll direction
 
 ---
 

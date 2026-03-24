@@ -175,3 +175,218 @@ function activate(i) {
 - `fastScrollEnd: true` — snaps to correct state on fast scroll
 - `overwrite: true` kills in-flight tweens; `fromTo` ensures correct start state
 - `revealed` gate prevents activation before section enters viewport
+
+---
+
+## Velocity Skew on Scroll
+
+Applies dynamic skewY transforms to elements based on scroll velocity. Uses `gsap.quickSetter` for per-frame performance.
+
+**Source**: [CodePen eYpGLYL](https://codepen.io/GreenSock/pen/eYpGLYL)
+
+```html
+<img src="image-1.jpg" alt="" class="skewElem">
+<img src="image-2.jpg" alt="" class="skewElem">
+<img src="image-3.jpg" alt="" class="skewElem">
+<img src="image-4.jpg" alt="" class="skewElem">
+<img src="image-5.jpg" alt="" class="skewElem">
+```
+
+```css
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding-top: 20vh;
+}
+body > img {
+  margin-bottom: 20vh;
+}
+img {
+  object-fit: cover;
+  width: 300px;
+  max-width: 80vw;
+  aspect-ratio: 1/1;
+}
+```
+
+```js
+let proxy = { skew: 0 },
+    skewSetter = gsap.quickSetter(".skewElem", "skewY", "deg"), // fast — bypasses .set() overhead
+    clamp = gsap.utils.clamp(-20, 20); // cap skew at ±20 degrees
+
+ScrollTrigger.create({
+  onUpdate: (self) => {
+    let skew = clamp(self.getVelocity() / -300);
+    // Only update if new skew is MORE severe — avoids interrupting smooth tween-back-to-zero
+    if (Math.abs(skew) > Math.abs(proxy.skew)) {
+      proxy.skew = skew;
+      gsap.to(proxy, {
+        skew: 0, duration: 0.8, ease: "power3",
+        overwrite: true,
+        onUpdate: () => skewSetter(proxy.skew)
+      });
+    }
+  }
+});
+
+// Right edge anchored to scroll bar side; force3D for GPU compositing
+gsap.set(".skewElem", { transformOrigin: "right center", force3D: true });
+```
+
+**Key patterns**:
+- `gsap.quickSetter()` — fastest way to set a single property per frame (no tween overhead)
+- `ScrollTrigger.getVelocity()` — returns scroll speed in px/s, sign indicates direction
+- `gsap.utils.clamp()` — prevents extreme values on fast flicks
+- Proxy object pattern — tween a plain object, apply via quickSetter in `onUpdate`
+- `overwrite: true` — kills previous tween when velocity changes direction
+
+---
+
+## Infinite Looped Panels
+
+Layered pinning with infinite scroll looping — panels stack on top of each other and loop seamlessly.
+
+**Source**: [CodePen VwbywPd](https://codepen.io/GreenSock/pen/VwbywPd)
+
+```html
+<div class="description panel">
+  <h1>Layered pinning with infinite looping</h1>
+  <p>Use pinning to layer panels on top of each other as you scroll.</p>
+</div>
+
+<section class="panel green">
+  <h2 class="panel__number">1</h2>
+</section>
+<section class="panel">
+  <h2 class="panel__number">2</h2>
+</section>
+<section class="panel purple">
+  <h2 class="panel__number">3</h2>
+</section>
+<section class="panel">
+  <h2 class="panel__number">4</h2>
+</section>
+<section class="panel blue">
+  <h2 class="panel__number">5</h2>
+</section>
+```
+
+```js
+gsap.registerPlugin(ScrollTrigger);
+
+let panels = gsap.utils.toArray(".panel"),
+    copy = panels[0].cloneNode(true);
+panels[0].parentNode.appendChild(copy); // Clone first panel to end for seamless looping
+
+// Pin each panel with no spacing — they stack visually
+panels.forEach((panel, i) => {
+  ScrollTrigger.create({
+    trigger: panel,
+    start: "top top",
+    pin: true,
+    pinSpacing: false  // Panels overlap instead of pushing content down
+  });
+});
+
+let maxScroll;
+let pageScrollTrigger = ScrollTrigger.create({
+  // Custom snap function handles edge cases at scroll boundaries
+  snap(value) {
+    let snappedValue = gsap.utils.snap(1 / panels.length, value);
+    if (snappedValue <= 0) {
+      // Don't snap to exactly 0 — keep 1px+ from top to prevent wrap
+      return 1.05 / maxScroll;
+    } else if (snappedValue >= 1) {
+      // Don't snap to exactly end — keep 1px+ from bottom to prevent wrap
+      return maxScroll / (maxScroll + 1.05);
+    }
+    return snappedValue;
+  }
+});
+
+function onResize() {
+  maxScroll = ScrollTrigger.maxScroll(window) - 1;
+}
+onResize();
+window.addEventListener("resize", onResize);
+
+// Non-passive listener to preventDefault at scroll boundaries for looping
+window.addEventListener("scroll", e => {
+  let scroll = pageScrollTrigger.scroll();
+  if (scroll > maxScroll) {
+    pageScrollTrigger.scroll(1);
+    e.preventDefault();
+  } else if (scroll < 1) {
+    pageScrollTrigger.scroll(maxScroll - 1);
+    e.preventDefault();
+  }
+}, { passive: false });
+```
+
+**Key patterns**:
+- `pinSpacing: false` — panels overlap/stack instead of creating scroll gaps
+- `cloneNode(true)` on first panel appended to end — creates seamless loop illusion
+- Custom `snap()` function — prevents snapping to exact 0 or 1 which would break the loop
+- `pageScrollTrigger.scroll()` — programmatically jump scroll position at boundaries
+- `{ passive: false }` — required for `preventDefault()` on scroll events
+- `ScrollTrigger.maxScroll()` — utility to get max scrollable distance
+
+---
+
+## Directionally Aware Header (Show/Hide on Scroll Direction)
+
+Header slides in when scrolling up, hides when scrolling down. Extremely common UI pattern.
+
+**Source**: [CodePen qBawMGb](https://codepen.io/GreenSock/pen/qBawMGb)
+
+```html
+<div class="main-tool-bar">Header</div>
+<div class="scrollable-area"></div>
+```
+
+```css
+.main-tool-bar {
+  height: 80px;
+  background: linear-gradient(144deg, #00bae2 4.56%, #fec5fb 72.98%);
+  color: #0e100f;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  width: 100%;
+  left: 0;
+  top: 0;
+}
+.scrollable-area {
+  height: 200vh;
+}
+```
+
+```js
+// Create the hide animation paused, then set progress to 1 (visible state)
+const showAnim = gsap.from('.main-tool-bar', {
+  yPercent: -100,
+  paused: true,
+  duration: 0.2
+}).progress(1);
+
+ScrollTrigger.create({
+  start: "top top",
+  end: "max",
+  onUpdate: (self) => {
+    // direction: -1 = scrolling up, 1 = scrolling down
+    self.direction === -1 ? showAnim.play() : showAnim.reverse();
+  }
+});
+```
+
+**Key patterns**:
+- `gsap.from().progress(1)` — creates animation in hidden state but immediately shows it (progress=1 means "at the end" = visible)
+- `paused: true` — animation only plays/reverses when explicitly called
+- `self.direction` — `-1` for scrolling up, `1` for scrolling down
+- `play()` / `reverse()` — smooth toggle without creating new tweens each frame
+- `end: "max"` — ScrollTrigger stays active for entire page scroll
+- No `trigger` element needed — uses the whole page as the scroll context
