@@ -106,14 +106,7 @@ rings.forEach((ring, i) => {
 
 ## 6. Repeating Timeline Patterns
 
-| Config | Behaviour |
-|--------|-----------|
-| `repeat: -1` | Infinite loop |
-| `repeatDelay: N` | N seconds gap between cycles |
-| `repeatRefresh: true` | Re-evaluate `random()` each cycle |
-| `yoyo: true` | Reverse on even cycles |
-| `.add(tl, time)` | Place sub-timeline at absolute position |
-| `.call(fn, args, time)` | Fire callback at absolute position |
+See **gsap-timeline** skill for repeat, repeatDelay, yoyo, and position parameter reference.
 
 ```js
 const master = gsap.timeline({ repeat: -1, repeatDelay: 4 })

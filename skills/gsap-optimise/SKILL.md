@@ -15,7 +15,7 @@ description: >
 # GSAP Optimise — Performance Pass
 
 > **Flow**: gsap-setup → gsap-animate → **gsap-optimise** → gsap-test
-> **References**: `references/performance-deep-dive.md` for extended API details.
+> **References**: See **gsap-performance** skill for extended API details.
 
 > **Companion**: For general GSAP performance guidance, invoke **gsap-performance**. This skill covers optimisation recipes and audit checklists only. Requires: `greensock/gsap-skills`
 
@@ -58,27 +58,10 @@ self.add('resetEffect', (el) => {
 
 ## 3. High-Frequency Animations
 
-| Method | Animates? | Speed | Use case |
-|--------|-----------|-------|----------|
-| `gsap.to()` | Yes | Normal | General animation |
-| `gsap.quickTo()` | Yes | Fast | Repeated cursor/scroll-driven |
-| `gsap.quickSetter()` | No | Fastest | Per-frame direct value piping |
-
-```js
-// quickTo — pre-creates reusable tween
-const xTo = gsap.quickTo('#cursor', 'x', { duration: 0.4, ease: 'power3' })
-el.addEventListener('mousemove', (e) => xTo(e.clientX))
-
-// quickSetter — bypasses tween creation
-const setX = gsap.quickSetter('#el', 'x', 'px')
-gsap.ticker.add(() => setX(mouseX))
-
-// pipe — chain transformations
-const xSet = gsap.utils.pipe(
-  gsap.utils.clamp(0, 100), gsap.utils.snap(5),
-  gsap.quickSetter('#el', 'x', 'px')
-)
-```
+See **gsap-performance** skill for quickTo, quickSetter, and piping API reference. Use the fastest tool that fits:
+- Tweened cursor tracking → `gsap.quickTo()`
+- Per-frame value piping → `gsap.quickSetter()`
+- CSS custom properties → direct `style.setProperty()`
 
 ---
 
@@ -143,4 +126,4 @@ gsap.to(el, { width: 200, height: 100, left: 50 })
 
 ## References
 
-- `references/performance-deep-dive.md` — Extended API: quickTo, quickSetter, pipe, ScrollTrigger.batch, scrub tuning, matchMedia, registerEffect, ticker/lagSmoothing, autoAlpha, force3D, lazy rendering internals, context cleanup internals, lazy initialisation, timeline reuse
+- See **gsap-performance** skill for extended API: quickTo, quickSetter, pipe, ScrollTrigger.batch, scrub tuning, matchMedia, registerEffect, ticker/lagSmoothing, autoAlpha, force3D, lazy rendering internals, context cleanup internals

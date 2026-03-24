@@ -82,14 +82,9 @@ onUnmounted(() => tiltCtx?.revert())
 
 ---
 
-## 3. autoAlpha vs opacity
+## 3. autoAlpha
 
-`autoAlpha` = `opacity` + `visibility: hidden` at 0. **Always** use for reveal animations.
-
-```js
-gsap.set(els, { autoAlpha: 0 })
-gsap.to(els, { autoAlpha: 1, duration: 0.8 })
-```
+Always use `autoAlpha` over `opacity` for reveals — see **gsap-core** skill for details.
 
 ---
 
@@ -123,13 +118,7 @@ onUnmounted(() => mm?.revert())
 
 ## 6. Timeline Position Parameters
 
-```js
-tl.to(el, { x: 100 })              // after previous
-  .to(el, { y: 100 }, '+=0.5')     // 0.5s gap
-  .to(el, { z: 100 }, '-=0.25')    // 0.25s overlap
-  .to(el, { rotation: 90 }, '<')   // same start as previous
-  .to(el, { scale: 2 }, 2)         // absolute: 2s from timeline start
-```
+See **gsap-timeline** skill for the full position parameter reference (`+=`, `-=`, `<`, absolute).
 
 ---
 

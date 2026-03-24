@@ -23,13 +23,7 @@ description: >
 
 ## 1. Installation
 
-```bash
-npm install gsap
-# React projects: also install the official hook
-npm install @gsap/react
-```
-
-GSAP plugins (ScrollTrigger, SplitText, etc.) are included in the `gsap` package — import directly.
+Install GSAP per the official **gsap-core** skill. Then set up the framework plugin below.
 
 ---
 

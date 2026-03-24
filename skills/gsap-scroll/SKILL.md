@@ -120,19 +120,6 @@ See `references/scroll-patterns.md` for:
 
 ---
 
-## Quick Reference
-
-| Property | Value | Use |
-|----------|-------|-----|
-| `toggleActions` | `'play none none reverse'` | Reveal on enter, undo on leave-back |
-| `scrub: true` | 1:1 scroll | Direct control |
-| `scrub: 0.5` | 0.5s catch-up | Smooth parallax |
-| `scrub: 1` | 1s catch-up | Complex timelines |
-| `pin: true` | Fixes element | Full-screen takeover |
-| `once: true` | Fire once | One-shot reveals |
-| `fastScrollEnd: true` | Snap on fast scroll | Callback sections |
-| `invalidateOnRefresh` | Recalc on resize | Responsive values |
-
 ## Rules
 
 1. Wrap all ScrollTrigger tweens in `gsap.context()` scoped to a ref

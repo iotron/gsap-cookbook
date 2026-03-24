@@ -78,12 +78,7 @@ function onMagnetMove(e) {
 function onMagnetLeave() { xTo(0); yTo(0) }
 ```
 
-### quickTo vs quickSetter
-
-| Tool | Use case | Speed |
-|------|----------|-------|
-| `gsap.quickTo` | Tweened updates (mousemove with easing) | Fast |
-| `gsap.quickSetter` | Instant per-frame value piping (ticker/RAF) | Fastest |
+> See **gsap-performance** skill for quickTo vs quickSetter API comparison.
 
 ---
 
@@ -104,14 +99,7 @@ gsap.to(el, { x: 0, onComplete: () => { el.style.willChange = 'auto' } })
 gsap.set(el, { force3D: true })
 ```
 
-### Tool selection guide
-
-| Scenario | Tool | Why |
-|----------|------|-----|
-| Mousemove with easing | `gsap.quickTo` | Pre-compiled, re-targets instantly |
-| Per-frame piping (ticker/RAF) | `gsap.quickSetter` | Zero tween overhead |
-| One-shot hover in/out | `gsap.to` + `overwrite: 'auto'` | Simple, auto-cleans |
-| CSS custom properties | Direct `style.setProperty` | No GSAP needed, fastest |
+> See **gsap-performance** skill for tool selection guidance.
 
 ### Cleanup checklist
 

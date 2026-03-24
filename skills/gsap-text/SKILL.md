@@ -97,11 +97,7 @@ onMounted(() => init(() => scroll()))
 
 ## 3. ScrambleText Decode
 
-| Style | Chars | Feel |
-|-------|-------|------|
-| Terminal | `'▓░▒█▀▄╬╠╣▐▌■□●○'` | Cyber / terminal |
-| Glitch | `'!@#$%^&*'` | Cyberpunk |
-| Binary | `'01'` | Data stream |
+See **gsap-plugins** skill for ScrambleText API reference. Recipe:
 
 ```js
 gsap.to(el, {

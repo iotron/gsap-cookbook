@@ -118,17 +118,6 @@ onUnmounted(() => {
 
 ---
 
-## Quick Reference
-
-| Pattern | Plugin | Key Properties | Duration |
-|---------|--------|----------------|----------|
-| Path draw (manual) | None | strokeDasharray, strokeDashoffset | 1.5-2s |
-| Path draw (plugin) | DrawSVG | drawSVG: '0%' to '100%' | 1.5-2s |
-| Morph | MorphSVGPlugin | attr.d or morphSVG | 1-2s |
-| Pulse ring | None | scale, autoAlpha, repeat: -1 | 2s/cycle |
-| Color sweep | None | fill, yoyo+repeat:1, elastic | 2s/sweep |
-| Scallop wave | None | scale, back.out(3), from: 'center' | 0.8s + stagger |
-
 ## References
 
 - `references/svg-patterns.md` — Circuit Tree triple-layer animation, CTAHud 5-layer system
